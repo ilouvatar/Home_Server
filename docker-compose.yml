@@ -1,0 +1,176 @@
+jackett:
+  image: linuxserver/jackett:latest
+  container_name: jackett
+  restart: always
+  ports:
+    - 9117:9117
+  environment:
+    - PUID=${PUID}
+    - PGID=${PGID}
+    - TZ=${TZ}
+  volumes:
+    - ${CONF_DIR}/jackett/:/config
+    - /etc/localtime:/etc/localtime:ro
+ 
+medusa:
+  image: pymedusa/medusa:latest
+  container_name: medusa
+  restart: always
+  ports:
+      - 8081:8081
+  environment:
+    - PUID=${PUID}
+    - PGID=${PGID}
+    - TZ=${TZ}
+  volumes:
+    - ${CONF_DIR}/medusa:/config
+    - ${DL_DIR}/medusa:/downloads
+    - ${TV_DIR}:/tv
+
+couchpotato:
+  image: linuxserver/couchpotato:latest
+  container_name: couchpotato
+  restart: always
+  ports:
+    - 5050:5050
+  environment:
+    - PUID=${PUID}
+    - PGID=${PGID}
+    - TZ=${TZ}
+  volumes:
+    - ${CONF_DIR}/couchpotato:/config
+    - ${DL_DIR}/couchpotato:/downloads
+    - ${MOVIE_DIR}/:/movies
+ 
+headphones:
+  image: linuxserver/headphones:latest
+  container_name: headphones
+  restart: always
+  ports:
+    - 8181:8181
+  environment:
+    - PUID=${PUID}
+    - PGID=${PGID}
+    - TZ=${TZ}
+  volumes:
+    - ${CONF_DIR}/headphones:/config
+    - ${DL_DIR}/headphones:/downloads
+    - ${MUSIC_DIR}/:/music
+
+sabnzbd:
+  image: linuxserver/sabnzbd:latest
+  container_name: sabnzbd
+  restart: always
+  net: "host"
+  ports:
+    - 8080:8080
+  environment:
+    - PUID=${PUID}
+    - PGID=${PGID}
+    - TZ=${TZ}
+  volumes:
+    - /home/media//config/sabnzbd:/config
+    - ${DL_DIR}/sabnzb:/downloads
+    - ${DL_INCOMPLETE_DIR}/:/incomplete-downloads
+    - /home/media/shared:/shared
+
+portainer:
+    image: portainer/portainer
+    container_name: portainer
+    restart: always
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${CONF_DIR}/portainer/data:/data
+      - ${SHARED_DIR}/shared:/shared
+    environment:
+    - TZ=${TZ}
+
+nzbhydra:
+  image: linuxserver/hydra2:latest
+  container_name: nzbhydra
+  restart: always
+  ports:
+    - 5076:5076
+  environment:
+    - PUID=${PUID}
+    - PGID=${PGID}
+    - TZ=${TZ}
+  volumes:
+    - ${CONF_DIR}/nzbhydra:/config
+    - ${DL_DIR}/nzbhydra:/downloads
+
+plex:
+  image: linuxserver/plex:latest
+  container_name: plex
+  restart: always
+  net: host
+  ports:
+    - 32400:32400
+  environment:
+    - PUID=${PUID}
+    - PGID=${PGID}
+    - TZ=${TZ}
+  volumes:
+    - ${CONF_DIR}/plex:/config
+    - ${CONF_DIR}/plex/movies:/data/movies
+    - ${CONF_DIR}/plex/tvshows:/data/tvshows
+
+Muximux:
+  image: linuxserver/muximux:latest
+  container_name: muximux
+  restart: always
+  ports:
+    - 81:80
+  environment:
+    - PUID=${PUID}
+    - PGID=${PGID}
+    - TZ=${TZ}
+  volumes:
+    - ${CONF_DIR}/muximux:/config
+
+glances:
+  image: vimagick/glances
+  volumes:
+    - ./data:/etc/glances
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+  environment:
+    - GLANCES_OPT=-w
+  net: host
+  pid: host
+  restart: always
+
+nextcloud:
+  container_name: nextcloud
+  restart: always
+  image: linuxserver/nextcloud
+  volumes:
+    - ${CONF_DIR}/nextcloud:/config
+    - ${CONF_DIR}/shared_data:/data
+    - ${CONF_DIR}/shared:/shared
+  ports:
+    - "444:443"
+  environment:
+    - PUID=${PUID}
+    - PGID=${PGID}
+
+wordpress:
+    image: wordpress
+    links:
+     - mariadb:mysql
+    environment:
+     - WORDPRESS_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+     - "80:80"
+    volumes:
+     - ./code:/code
+     - ./html:/var/www/html
+mariadb:
+    image: mariadb
+    environment:
+     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+     - MYSQL_DATABASE=wordpress
+    volumes:
+     - ./database:/var/lib/mysql
