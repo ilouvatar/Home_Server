@@ -1,0 +1,13 @@
+PUID=1001
+PGID=1001
+TZ="Europe/Paris"
+HOME_DIR="/home/media/"
+CONF_DIR="/home/media/config"
+DL_DIR="/home/media/downloads"
+DL_INCOMPLETE_DIR="/home/media/downloads/incomplete"
+TV_DIR="/home/media/tv"
+MOVIE_DIR="/home/media/movies"
+MUSIC_DIR="/home/media/music"
+SHARED_DIR="/home/media/shared"
+MYSQL_ROOT_PASSWORD="CHANGEME"
+WEB_DIR="/home/media/web"
