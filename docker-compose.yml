@@ -151,7 +151,7 @@ nextcloud:
     - ${CONF_DIR}/shared_data:/data
     - ${CONF_DIR}/shared:/shared
   ports:
-    - "444:443"
+    - "443:443"
   environment:
     - PUID=${PUID}
     - PGID=${PGID}
